@@ -12,9 +12,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
+import java.security.Key;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Base64.Decoder;
 import java.util.List;
+import javax.crypto.Cipher;
+import javax.crypto.spec.SecretKeySpec;
 import javax.xml.crypto.Data;
 
 /**
@@ -138,5 +142,29 @@ public class CryptopalsSet1 {
         
     }
     
+    public static AESDecrypt AESDecryption(String key, String filename)
+    throws Exception {
+        String currLine;
+        String ciphertext = "";
+        InputStream in = new FileInputStream(filename);
+        InputStreamReader input = new InputStreamReader(in, Charset.forName("UTF-8"));
+        BufferedReader bufReader = new BufferedReader(input);
+            while ((currLine = bufReader.readLine())!=null) {
+                ciphertext += currLine;
+            }
+
+        DataService ciphertextData = new DataService(ciphertext, DataService.Encoding.HEX);
+        AESDecrypt result;
+
+
+        Key aesKey = new SecretKeySpec(key.getBytes(), "AES");
+        Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
+        cipher.init(Cipher.DECRYPT_MODE, aesKey);
+
+        String plaintext = new String(cipher.doFinal(ciphertextData.getBytes()));
+        result = new AESDecrypt(key, plaintext, ciphertextData);
+
+        return result;
+    }
     
 }
