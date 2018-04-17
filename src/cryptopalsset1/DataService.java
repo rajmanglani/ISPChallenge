@@ -95,7 +95,7 @@ public class DataService {
     }
 
     // Return the ASCII character corresponding to integer n.
-    public char chr(int n) {
+    public static char chr(int n) {
         return (char)n;
     }
 

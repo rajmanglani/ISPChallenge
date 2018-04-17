@@ -15,6 +15,7 @@ import java.nio.charset.Charset;
 import java.security.Key;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Base64.Decoder;
 import java.util.List;
 import javax.crypto.Cipher;
@@ -40,12 +41,14 @@ public class CryptopalsSet1 {
         
     }
     
+    //Ch 1
     public static String hexToBase64(String hex){
         //create new byte[]
         DataService ds = new DataService(hex, DataService.Encoding.HEX);
         return ds.getBase64();
     }
     
+    //Ch 2
     public static String fixedXor(String hex1, DataService.Encoding enc1, String hex2, DataService.Encoding enc2){
         DataService ds1 = new DataService(hex1, enc1);
         DataService ds2 = new DataService(hex2, enc2);
@@ -64,6 +67,7 @@ public class CryptopalsSet1 {
         return ds3.getHex();
     }
     
+    //Ch 3
     public static XorDecrypt crackSingleXor(String hex1){
         //list for all possible decryptions and then select the best based on scoring
         List<XorDecrypt> decryptions = new ArrayList<>();
@@ -112,6 +116,7 @@ public class CryptopalsSet1 {
         return best;
     } 
     
+    //Ch 4
     public static XorDecrypt findCrackXor(String file) throws FileNotFoundException, IOException{
         XorDecrypt best = null;
         XorDecrypt c ;
@@ -129,6 +134,7 @@ public class CryptopalsSet1 {
         return best;
     }
     
+    //Ch 5
     public static String repeatingXor(String text, String key){
         //make string of same length from key to xor
         StringBuilder sb = new StringBuilder(text.length()+key.length()-1);
@@ -142,6 +148,7 @@ public class CryptopalsSet1 {
         
     }
     
+    // Ch 7
     public static AESDecrypt AESDecryption(String key, String filename)
     throws Exception {
         String currLine;
@@ -165,6 +172,47 @@ public class CryptopalsSet1 {
         result = new AESDecrypt(key, plaintext, ciphertextData);
 
         return result;
+    }
+    
+    //Ch 8
+    public static String aesECBFind(String file)
+    throws IOException {
+        double best = 0;
+        double current;
+        String bestLine = "";
+        String currLine;
+        InputStream in = new FileInputStream(file);
+        InputStreamReader input = new InputStreamReader(in, Charset.forName("UTF-8"));
+        BufferedReader bufReader = new BufferedReader(input); 
+        while ((currLine = bufReader.readLine()) != null) {
+            current = scoreAES(currLine);
+            if (current > best) {
+                bestLine = currLine;
+                best = current;
+            }
+        }
+        return bestLine;
+    }
+
+    // Score likeliness of AES encoding
+    private static double scoreAES(String ciphertext) {
+        DataService cipher = new DataService(ciphertext, DataService.Encoding.HEX);
+        if (cipher.getSize() % 16 != 0) {
+            return 0;
+        }
+        ArrayList<byte[]> byteChunks = new ArrayList<byte[]>();
+        for (int i = 0; i < cipher.getSize() / 16; i++) {
+            byteChunks.add(Arrays.copyOfRange(cipher.getBytes(), i * 16, i * 16 + 16));
+        }
+        double duplicates = 0;
+        for (int i = 0; i < byteChunks.size(); i++) {
+            for (int j = i; j < byteChunks.size(); j++) {
+                if (Arrays.equals(byteChunks.get(i), byteChunks.get(j))) {
+                    duplicates++;
+                }
+            }
+        }
+        return duplicates / cipher.getSize();
     }
     
 }
