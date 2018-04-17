@@ -8,13 +8,9 @@ package cryptopalsset1;
 import java.nio.ByteBuffer;
 import java.util.Base64;
 
-/**
- *
- * @author student
- */
 public class DataService {
 
-    // Enum type to indicate the encoding of strings
+    // Enum type
     public enum Encoding { DEC, HEX, BASE64, ASCII }
 
     // Byte array to store information
@@ -49,21 +45,6 @@ public class DataService {
                 data[i] = (byte)(info.charAt(i));
             }
         }
-    }
-
-    // Return true if that equals this; return false otherwise.
-    public boolean equals(DataService that) {
-        int thisLength = getSize();
-        if (thisLength != that.getSize()) {
-            return false;
-        }
-        byte[] thatBytes = that.getBytes();
-        for (int i = 0; i < thisLength; i++) {
-            if (data[i] != thatBytes[i]) {
-                return false;
-            }
-        }
-        return true;
     }
 
     // Return data as an integer.
@@ -114,33 +95,28 @@ public class DataService {
     }
 
     // Return the ASCII character corresponding to integer n.
-    public static char chr(int n) {
+    public char chr(int n) {
         return (char)n;
     }
 
-    // Return the numeric value of an ASCII character c.
-    public static int ord(char c) {
-        return (int)c;
-    }
-
     // Set data based on the byte values of integer n.
-    private static byte[] intToBytes(int n) {
+    private byte[] intToBytes(int n) {
         return ByteBuffer.allocate(4).putInt(n).array();
     }
 
     // Return a byte corresponding to hex characters x and y.
-    private static byte hexToByte(char x, char y) {
+    private byte hexToByte(char x, char y) {
         return (byte) (16 * hexDigitToInt(x) + hexDigitToInt(y));
     }
 
     // Return a length two hex string corresponding to byte b.
-    private static String byteToHex(byte b) {
+    private String byteToHex(byte b) {
         int byteVal = (int)b;
         return "" + intToHexDigit(byteVal / 16) + intToHexDigit(byteVal % 16);
     }
 
     // Return a hex digit corresponding to integer n.
-    private static char intToHexDigit(int n) {
+    private char intToHexDigit(int n) {
         if (0 <= n && n <= 9) {
             return chr(48 + n); // 48 == ord('0')
         } else {
@@ -149,7 +125,7 @@ public class DataService {
     }
 
     // Return an integer corresponding to hex digit x.
-    private static int hexDigitToInt(char x) {
+    private int hexDigitToInt(char x) {
         if ('0' <= x && x <= '9') {
             return x - 48;      // 48 == ord('0')
         } else if ('A' <= x && x <= 'Z') {
